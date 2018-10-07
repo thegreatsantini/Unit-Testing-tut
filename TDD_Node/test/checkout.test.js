@@ -3,23 +3,41 @@ const Checkout = require("../checkout");
 
 let checkout;
 
-beforeEach(()=>{
+beforeEach(() => {
     checkout = new Checkout();
-})
-it("Can add item price", (done) => {
     checkout.addItemPrice('a', 1);
-    done();
+    checkout.addItemPrice("b", 2);
 })
 
-it("Can add item", (done)=>{
-    checkout.addItemPrice("a", 1);
-    checkout.addItem("a");
-    done();
-})
+it("Can calculate current total", (done) => {
 
-it("Can calculate current total", (done)=> {
-    checkout.addItemPrice('a', 1);
     checkout.addItem('a');
     expect(checkout.calculateTotal()).to.equal(1);
+    done();
+})
+
+it('Can add multiple items and calculate total', (done) => {
+    checkout.addItem('a');
+    checkout.addItem('b');
+    expect(checkout.calculateTotal()).to.equal(3);
+    done();
+})
+
+it('Can add discount rule', (done) => {
+    checkout.addDiscount('a', 3, 2);
+    done()
+})
+
+it('Can apply discount rules to the total', (done) => {
+    checkout.addDiscount('a', 3, 2);
+    checkout.addItem('a');
+    checkout.addItem('a');
+    checkout.addItem('a');
+    expect(checkout.calculateTotal()).to.equal(2);
+    done();
+})
+
+it("Throws when added item doesn't have a price specified", (done) => {
+    expect(() => checkout.addItem('c')).to.throw();
     done();
 })
